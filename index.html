@@ -11,55 +11,38 @@
     >
   </body>
 </html>
-<script src="./canvas-libre.js"></script>
+<!-- <script src="./canvas-libre.js"></script> -->
+
+<script src="https://unpkg.com/mqtt@4.0.1/dist/mqtt.min.js"></script>
+<script src="./game.js"></script>
+
 <script>
 
-  const points = []
-  /**
-   * Gerador de pontos
-   */
-  const dimensao = 10
-  const tamanho = 50
-  for(let c = 1 ; c <= dimensao ; c++){
-    for(let l = 1 ; l <= dimensao ; l++){
-      points.push({
-        code: `C${c}L${l}`,
-        coord: [c*tamanho, l*tamanho]
-      })
-    }
-  }
+  const urlParams = new URLSearchParams(window.location.search);
+  const sala = urlParams.get('sala');
 
-  const obj = {
-    data: [
-      {
-        user: 'user1',
-        color: 'blue',
-        edges: [
-          ['C4L4', 'C4L5'],
-          ['C4L4', 'C5L4']
-        ]
-      },
-      {
-        user: 'user2',
-        color: 'red',
-        edges: [
-          ['C1L6', 'C1L7'],
-          ['C1L7', 'C2L7'],
-          ['C2L7', 'C2L6'],
-          ['C2L6', 'C1L6']
-        ]
-      },
-      {
-        user: 'arcoiru',
-        color: 'green',
-        edges: [
-          ['C5L6', 'C5L7'],
-          ['C5L7', 'C6L7'],
-          ['C6L7', 'C6L6']
-        ]
-      }
-    ]
-  }
+  const client = mqtt.connect('ws://test.mosquitto.org:8080')
 
-  draw(obj, points)
+  const users = []
+
+  const game = new Game('#canvasLibre')
+  game.setUsers(users)
+
+  client.subscribe(`${sala}/change-edges`)
+
+  client.on("message", function (topic, payload) {
+    game.setUsers(JSON.parse(payload))
+  })
+
+  game.on('new-user', (user) => {
+    client.publish(`${sala}/new-user`, JSON.stringify(user))
+  })
+
+  game.on('change-edges', (edges) => {
+    client.publish(`${sala}/change-edges`, JSON.stringify(edges))
+  })
+
+  game.on('on-cursor', (edge) => {
+    client.publish(`${sala}/new-cursor`, JSON.stringify(edge))
+  })
 </script>

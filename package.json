@@ -1,0 +1,19 @@
+{
+  "name": "canvas-libre",
+  "version": "1.0.0",
+  "description": "### Define canvas tag",
+  "main": "canvas-libre.js",
+  "scripts": {
+    "start": "npx static-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://willguitaradmfar@github.com/willguitaradmfar/canvas-libre.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/willguitaradmfar/canvas-libre/issues"
+  },
+  "homepage": "https://github.com/willguitaradmfar/canvas-libre#readme"
+}

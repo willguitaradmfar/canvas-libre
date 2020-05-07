@@ -1,4 +1,7 @@
 const lineWidth = 2
+const pointWidth = 2
+
+
 
 const drawCircle = ({ ctx, x, y, rad, sAng, eAng, color = 'blue' }) => {
   ctx.beginPath()
@@ -20,7 +23,7 @@ const drawLine = ({ ctx, moveX, moveY, lineX, lineY, color }) => {
 
 const drawPoint = ({ ctx, x, y, color }) => {
   ctx.beginPath()
-  ctx.arc(x, y, 3, 0, 2 * Math.PI, true);
+  ctx.arc(x, y, pointWidth, 0, 2 * Math.PI, true);
   ctx.strokeStyle = color
   ctx.fill()
   ctx.closePath()
@@ -74,9 +77,10 @@ class Canvas {
   }
 }
 
+const raioEdge = 30
+
 const draw = (obj, points) => {
-  const c = document.getElementById('canvasLibre')
-  const ctx = c.getContext('2d')
+  
 
   for(const point of points){
     drawPoint({ ctx, color: 'black', x: point.coord[0], y: point.coord[1] })
@@ -99,3 +103,43 @@ const draw = (obj, points) => {
       .toString()
   })
 }
+
+const setup = () => {
+  const c = document.getElementById('canvasLibre')
+  const ctx = c.getContext('2d')
+
+  function mouseMove(event) {
+    houver(event.offsetX, event.offsetY)
+  }
+  
+  function houver(x, y) {
+    const _points = points.filter(point => {
+      const distancia = Math.hypot((x - point.coord[0]), (y - point.coord[1]))
+      return distancia < raioEdge
+    })
+
+    if(_points.length !== 2) return
+
+    const moveX = _points[0].coord[0]
+    const moveY = _points[0].coord[1]
+
+    const lineX = _points[1].coord[0]
+    const lineY = _points[1].coord[1]
+
+    drawLine({
+      ctx,
+      moveX,
+      moveY,
+      lineX,
+      lineY,
+      color: '#d3d3d3'
+    })
+    console.log(_points.map(point => point.code), x, y)
+  }
+
+  c.addEventListener('mousemove', mouseMove)
+}
+
+setInterval(() => {
+  
+}, 100)
