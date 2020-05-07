@@ -13,40 +13,53 @@
 </html>
 <script src="./canvas-libre.js"></script>
 <script>
+
+  const points = []
+  /**
+   * Gerador de pontos
+   */
+  const dimensao = 10
+  const tamanho = 50
+  for(let c = 1 ; c <= dimensao ; c++){
+    for(let l = 1 ; l <= dimensao ; l++){
+      points.push({
+        code: `C${c}L${l}`,
+        coord: [c*tamanho, l*tamanho]
+      })
+    }
+  }
+
   const obj = {
     data: [
       {
         user: 'user1',
         color: 'blue',
-        edges: [[300, 100]]
+        edges: [
+          ['C4L4', 'C4L5'],
+          ['C4L4', 'C5L4']
+        ]
       },
       {
-        //user: 'user2',
+        user: 'user2',
         color: 'red',
         edges: [
-          [120, 320],
-          [500, 222],
-          [10, 20],
-          [120, 320]
+          ['C1L6', 'C1L7'],
+          ['C1L7', 'C2L7'],
+          ['C2L7', 'C2L6'],
+          ['C2L6', 'C1L6']
         ]
       },
       {
         user: 'arcoiru',
         color: 'green',
         edges: [
-          [400, 400],
-          [500, 222]
-        ]
-      },
-      {
-        color: 'yellow',
-        edges: [
-          [444, 300],
-          [200, 500]
+          ['C5L6', 'C5L7'],
+          ['C5L7', 'C6L7'],
+          ['C6L7', 'C6L6']
         ]
       }
     ]
   }
 
-  draw(obj)
+  draw(obj, points)
 </script>

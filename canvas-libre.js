@@ -1,4 +1,4 @@
-const lineWidth = 10
+const lineWidth = 2
 
 const drawCircle = ({ ctx, x, y, rad, sAng, eAng, color = 'blue' }) => {
   ctx.beginPath()
@@ -18,6 +18,14 @@ const drawLine = ({ ctx, moveX, moveY, lineX, lineY, color }) => {
   ctx.closePath()
 }
 
+const drawPoint = ({ ctx, x, y, color }) => {
+  ctx.beginPath()
+  ctx.arc(x, y, 3, 0, 2 * Math.PI, true);
+  ctx.strokeStyle = color
+  ctx.fill()
+  ctx.closePath()
+}
+
 function * generateId () {
   while (true) {
     const random = Math.floor(Math.random() * Date.now() + 1)
@@ -26,44 +34,37 @@ function * generateId () {
 }
 
 class Canvas {
-  constructor ({ ctx, startX = 0, startY = 0, color = 'black', user }) {
+  constructor ({ ctx, color = 'black', user }) {
     this.ctx = ctx
-    this.moveX = startX
-    this.moveY = startY
-    this.lineX = 0
-    this.lineY = 0
     this.color = color
     this.user = user || `anonymous_${generateId().next().value}`
   }
 
   draw ({ edges }) {
+
     if (!edges.length) {
       throw new Error('empty edges')
     }
-    if (edges.length === 1) {
-      this.moveX = 0
-      this.moveY = 0
-    } else {
-      const edg = edges[0]
-      this.moveX = edg[0]
-      this.moveY = edg[1]
-      edges.shift()
-    }
+  
+    for(const edge of edges) {
 
-    edges.map(edge => {
-      this.lineX = edge[0]
-      this.lineY = edge[1]
+      if(!edge.from || !edge.to) continue
+
+      const moveX = edge.from.coord[0]
+      const moveY = edge.from.coord[1]
+
+      const lineX = edge.to.coord[0]
+      const lineY = edge.to.coord[1]
+
       drawLine({
         ctx: this.ctx,
-        moveX: this.moveX,
-        moveY: this.moveY,
-        lineX: this.lineX,
-        lineY: this.lineY,
+        moveX,
+        moveY,
+        lineX,
+        lineY,
         color: this.color
       })
-      this.moveX = this.lineX
-      this.moveY = this.lineY
-    })
+    }
     return this
   }
 
@@ -73,9 +74,13 @@ class Canvas {
   }
 }
 
-const draw = obj => {
+const draw = (obj, points) => {
   const c = document.getElementById('canvasLibre')
   const ctx = c.getContext('2d')
+
+  for(const point of points){
+    drawPoint({ ctx, color: 'black', x: point.coord[0], y: point.coord[1] })
+  }
 
   obj.data.map(item => {
     new Canvas({
@@ -84,7 +89,12 @@ const draw = obj => {
       user: item.user
     })
       .draw({
-        edges: item.edges
+        edges: item.edges.map(edge => {
+          return {
+            from: points.find(point => point.code === edge[0]),
+            to: points.find(point => point.code === edge[1])
+          }
+        })
       })
       .toString()
   })
