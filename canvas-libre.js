@@ -18,7 +18,12 @@ const drawLine = ({ ctx, moveX, moveY, lineX, lineY, color }) => {
   ctx.closePath()
 }
 
-const generateId = () => Date.now().toString()
+function * generateId () {
+  while (true) {
+    const random = Math.floor(Math.random() * Date.now() + 1)
+    yield random
+  }
+}
 
 class Canvas {
   constructor ({ ctx, startX = 0, startY = 0, color = 'black', user }) {
@@ -28,10 +33,23 @@ class Canvas {
     this.lineX = 0
     this.lineY = 0
     this.color = color
-    this.user = user || `anonymous_${generateId()}`
+    this.user = user || `anonymous_${generateId().next().value}`
   }
 
   draw ({ edges }) {
+    if (!edges.length) {
+      throw new Error('empty edges')
+    }
+    if (edges.length === 1) {
+      this.moveX = 0
+      this.moveY = 0
+    } else {
+      const edg = edges[0]
+      this.moveX = edg[0]
+      this.moveY = edg[1]
+      edges.shift()
+    }
+
     edges.map(edge => {
       this.lineX = edge[0]
       this.lineY = edge[1]
@@ -55,7 +73,7 @@ class Canvas {
   }
 }
 
-const buildCanvasLibre = obj => {
+const draw = obj => {
   const c = document.getElementById('canvasLibre')
   const ctx = c.getContext('2d')
 

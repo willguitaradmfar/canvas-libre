@@ -3,8 +3,8 @@
   <body>
     <canvas
       id="canvasLibre"
-      width="600"
-      height="450"
+      width="800"
+      height="600"
       style="border:1px solid #d3d3d3;"
     >
       Your browser does not support the HTML5 canvas tag.</canvas
@@ -18,23 +18,35 @@
       {
         user: 'user1',
         color: 'blue',
-        edges: [
-          [500, 10],
-          [500, 100],
-          [10, 100]
-        ]
+        edges: [[300, 100]]
       },
       {
         //user: 'user2',
         color: 'red',
         edges: [
-          [12, 32],
-          [5, 2],
-          [1, 7]
+          [120, 320],
+          [500, 222],
+          [10, 20],
+          [120, 320]
+        ]
+      },
+      {
+        user: 'arcoiru',
+        color: 'green',
+        edges: [
+          [400, 400],
+          [500, 222]
+        ]
+      },
+      {
+        color: 'yellow',
+        edges: [
+          [444, 300],
+          [200, 500]
         ]
       }
     ]
   }
 
-  buildCanvasLibre(obj)
+  draw(obj)
 </script>
