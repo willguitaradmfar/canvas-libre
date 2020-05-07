@@ -2,7 +2,14 @@
 
 ### Define canvas tag
 
-<canvas id="canvasLibre" width="800" height="600" style="border: 1px solid #d3d3d3;"></canvas>
+```html
+<canvas
+  id="canvasLibre"
+  width="800"
+  height="600"
+  style="border: 1px solid #d3d3d3;"
+></canvas>
+```
 
 ### Import the lib
 
