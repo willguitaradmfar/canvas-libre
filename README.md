@@ -1,5 +1,9 @@
 # Usage
 
+### Define canvas tag
+
+<canvas id="canvasLibre" width="800" height="600" style="border: 1px solid #d3d3d3;"></canvas>
+
 ### Import the lib
 
 ```html
@@ -13,12 +17,12 @@
   const obj = {
     data: [
       {
-        user: 'user1',
-        color: 'blue',
-        edges: [[300, 100]]
-      }
-    ]
-  }
-  draw(obj)
+        user: "user1",
+        color: "blue",
+        edges: [[300, 100]],
+      },
+    ],
+  };
+  draw(obj);
 </script>
 ```
