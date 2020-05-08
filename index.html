@@ -1,48 +1,23 @@
 <!DOCTYPE html>
 <html>
+  <head>
+  </head>
   <body>
     <canvas
       id="canvasLibre"
-      width="800"
-      height="600"
       style="border:1px solid #d3d3d3;"
     >
       Your browser does not support the HTML5 canvas tag.</canvas
     >
   </body>
 </html>
-<!-- <script src="./canvas-libre.js"></script> -->
+<script src="https://unpkg.com/deepmerge@4.2.2/dist/umd.js"></script>
 
 <script src="https://unpkg.com/mqtt@4.0.1/dist/mqtt.min.js"></script>
 <script src="./game.js"></script>
+<script src="./logica-do-jogo.js"></script>
 
 <script>
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const sala = urlParams.get('sala');
-
-  const client = mqtt.connect('wss://test.mosquitto.org:8081')
-
-  const users = []
-
-  const game = new Game('#canvasLibre')
-  game.setUsers(users)
-
-  client.subscribe(`${sala}/change-edges`)
-
-  client.on("message", function (topic, payload) {
-    game.setUsers(JSON.parse(payload))
-  })
-
-  game.on('new-user', (user) => {
-    client.publish(`${sala}/new-user`, JSON.stringify(user))
-  })
-
-  game.on('change-edges', (edges) => {
-    client.publish(`${sala}/change-edges`, JSON.stringify(edges))
-  })
-
-  game.on('on-cursor', (edge) => {
-    client.publish(`${sala}/new-cursor`, JSON.stringify(edge))
-  })
+  const game = new LogicaMarota('#canvasLibre')
+  game.setUsers()
 </script>

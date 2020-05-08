@@ -1,17 +1,53 @@
 class Game {
   constructor(selector, options = {}){
-    this.raioEdge = 40
+    const { innerWidth: width, innerHeight: height } = window
+
+    this.raioEdge = 50
     this.lineWidth = 4
     this.pointWidth = 2
     this.options = options
-    this.options.dimensao = this.options.dimensao || [10, 10]
     this.options.space = this.options.space || 50
+    this.options.dimensao = this.options.dimensao || [width/this.options.space, height/this.options.space]
     this.generatePoints()
+
+    const urlParams = new URLSearchParams(window.location.search);
+    this.sala = urlParams.get('sala');
+
+    this.listeners = {}
     
     this.target = document.querySelector(selector)
+    this.target.setAttribute('width', width)
+    this.target.setAttribute('height', height)
     this.ctx = this.target.getContext('2d')
     this.target.addEventListener('mousemove', this.onMouseMove.bind(this))
     this.target.addEventListener('click', this.onMouseClick.bind(this))
+  }
+
+  getClient(){
+    return mqtt.connect('wss://test.mosquitto.org:8081')
+  }
+
+  connect(){
+    this.client = this.getClient()
+    this.client.on('connect', this.connected.bind(this))
+  }
+
+  connected(){
+    console.log('Connected !')
+  }
+
+  subscribe(topic, fn){
+    const clientSubscribe = this.getClient()
+    clientSubscribe.on('connect', () => {
+      clientSubscribe.subscribe(`${this.sala}/${topic}`)
+      clientSubscribe.on("message", function (topic, payload) {
+        fn(JSON.parse(payload))
+      })      
+    })  
+  }
+
+  publish(topic, obj){
+    this.client.publish(`${this.sala}/${topic}`, JSON.stringify(obj))
   }
 
   generatePoints(){
@@ -26,7 +62,7 @@ class Game {
     }
   }
 
-  setUsers(users){
+  setUsers(users = []){
     this.users = users
     this.draw()
   }
@@ -36,15 +72,19 @@ class Game {
   }
 
   on(event, fn){
+    this.subscribe(event, (obj) => {
+      return fn(obj)
+    })
     this.listeners = this.listeners || {}
-    this.listeners[event] = fn
+    this.listeners[event] = (obj) => {
+      this.publish(event, obj)
+    }
   }
 
   draw(){
     this.clear()
     for(const point of this.points){
       this.drawPoint({ 
-        ctx: this.ctx, 
         color: 'black', 
         x: point.coord[0], 
         y: point.coord[1] 
@@ -56,7 +96,6 @@ class Game {
     }
 
     for(const user of this.users) {
-
       const edges = user.edges.map(edge => {
         return {
           from: this.points.find(point => point.code === edge[0]),
@@ -65,7 +104,7 @@ class Game {
       })
 
       if (!edges.length) {
-        return
+        continue
       }
 
       for(const edge of edges) {
@@ -98,12 +137,13 @@ class Game {
 
   houverOrClick(x, y, isClick = false) {
     const _points = this.points.filter(point => {
-      const distancia = Math.hypot((x - point.coord[0]), (y - point.coord[1]))
+      const distancia = Math.hypot((y - point.coord[1]), (x - point.coord[0]))
       return distancia < this.raioEdge
     })
 
     if(_points.length !== 2) {
       this.cursor = undefined
+      this.draw()
       return
     }
 
@@ -129,7 +169,7 @@ class Game {
       me.edges.push([_points[0].code, _points[1].code])
       
       if(this.listeners['change-edges']) {
-        this.listeners['change-edges'](this.users)
+        this.listeners['change-edges'](me)
       }
    } else {
       const moveX = _points[0].coord[0]
