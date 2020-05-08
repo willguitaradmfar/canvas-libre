@@ -1,23 +1,33 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <style>
+      #lock {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #display {
+        background-color: darkkhaki;
+        color: black;
+        padding: 30px;
+        border-radius: 30px;
+      }
+    </style>
   </head>
   <body>
-    <canvas
-      id="canvasLibre"
-      style="border:1px solid #d3d3d3;"
-    >
-      Your browser does not support the HTML5 canvas tag.</canvas
-    >
+    <div id="lock">
+      <span id="display">Conectando ....</span>
+    </div>
+    <canvas id="canvasLibre">Your browser does not support the HTML5 canvas tag.</canvas>
   </body>
 </html>
 <script src="https://unpkg.com/deepmerge@4.2.2/dist/umd.js"></script>
-
 <script src="https://unpkg.com/mqtt@4.0.1/dist/mqtt.min.js"></script>
-<script src="./game.js"></script>
-<script src="./logica-do-jogo.js"></script>
+<script src="./src/core/Game.js"></script>
+<script src="./src/implementation/LogicaMarota.js"></script>
 
 <script>
-  const game = new LogicaMarota('#canvasLibre')
-  game.setUsers()
+  new LogicaMarota('#canvasLibre')
 </script>

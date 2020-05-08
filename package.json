@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/willguitaradmfar/canvas-libre/issues"
   },
-  "homepage": "https://github.com/willguitaradmfar/canvas-libre#readme"
+  "homepage": "https://github.com/willguitaradmfar/canvas-libre#readme",
+  "devDependencies": {
+    "standard": "^12.0.1"
+  }
 }
